@@ -1,0 +1,25 @@
+income:
+  work:
+    value: 2000
+    frequency: monthly
+
+expenses:
+  rent: 
+    value: 450
+    frequency: monthly
+  electricity:
+    value: 150...300
+    frequency: monthly
+  gas:
+   value: 150...300
+   frequency: monthly
+  household:
+    value: 300
+    frequency: monthly
+  car registration:
+    value: 250
+    frequency: 6 months
+  unexpected:
+    value: 200...300
+    frequency: 6 months
+
