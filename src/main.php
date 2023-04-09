@@ -102,8 +102,6 @@ function main(
     if (!is_dir("$directory/$workspace")) {
         mkdir("$directory/$workspace", 0777, true);
     }
-
-    $periodReadable = $period->format("Y F");
     
     $highest = [
         'key'   => 'none',
@@ -160,41 +158,58 @@ function main(
 
     file_put_contents("$directory/$workspace/$previousInputsFileName", $inputs);
 
-    $inputsForMarkdown = preg_replace('/^/m', '> ', $inputs);
+    $mdVars = [
+        "status"           => $remaining > 0?'✅':'❌',
+        "period"           => $period->format("Y F"),
+        "rent"             => $expenses['rent']           > 0?"\$\color{red}{\\textsf{{$expenses['rent']}}}\$":"\$\color{green}{\\textsf{{$expenses['rent']}}}\$",
+        "utilities"        => $expenses['utilities']      > 0?"\$\color{red}{\\textsf{{$expenses['utilities']}}}\$":"\$\color{green}{\\textsf{{$expenses['utilities']}}}\$",
+        "food"             => $expenses['food']           > 0?"\$\color{red}{\\textsf{{$expenses['food']}}}\$":"\$\color{green}{\\textsf{{$expenses['food']}}}\$",
+        "gas"              => $expenses['gas']            > 0?"\$\color{red}{\\textsf{{$expenses['gas']}}}\$":"\$\color{green}{\\textsf{{$expenses['gas']}}}\$",
+        "entertainment"    => $expenses['entertainment']  > 0?"\$\color{red}{\\textsf{{$expenses['entertainment']}}}\$":"\$\color{green}{\\textsf{{$expenses['entertainment']}}}\$",
+        "clothes"          => $expenses['clothes']        > 0?"\$\color{red}{\\textsf{{$expenses['clothes']}}}\$":"\$\color{green}{\\textsf{{$expenses['clothes']}}}\$",
+        "schoolSupplies"   => $expenses['schoolSupplies'] > 0?"\$\color{red}{\\textsf{{$expenses['schoolSupplies']}}}\$":"\$\color{green}{\\textsf{{$expenses['schoolSupplies']}}}\$",
+        "moneyForFamily"   => $expenses['moneyForFamily'] > 0?"\$\color{red}{\\textsf{{$expenses['moneyForFamily']}}}\$":"\$\color{green}{\\textsf{{$expenses['moneyForFamily']}}}\$",
+        "unplanned"        => $expenses['unplanned']      > 0?"\$\color{red}{\\textsf{{$expenses['unplanned']}}}\$":"\$\color{green}{\\textsf{{$expenses['unplanned']}}}\$",
+        "cc"               => $expenses['cc']             > 0?"\$\color{red}{\\textsf{{$expenses['cc']}}}\$":"\$\color{green}{\\textsf{{$expenses['cc']}}}\$",
+        "other"            => $expenses['other']          > 0?"\$\color{red}{\\textsf{{$expenses['other']}}}\$":"\$\color{green}{\\textsf{{$expenses['other']}}}\$",
+        "otherDescription" => $expenses['other']          > 0 ?<<<HTML
+            > **Note** `Other` description
+            > {$otherDescription}
+            HTML:'',
+        "income"    => $income    > 0?"\$\color{green}{\\textsf{ $income }}\$":"\$\color{red}{\\textsf{ $income }}\$",
+        "remaining" => $remaining > 0?"\$\color{green}{\\textsf{ $remaining }}\$":"\$\color{red}{\\textsf{ $remaining }}\$",
+    ];
 
-    file_put_contents("$directory/$workspace/$periodReadable.md", <<<HTML
-        ## Budget of $periodReadable
+    file_put_contents("$directory/$workspace/{$mdVars['period']}.md", <<<HTML
+        ## Budget of {$mdVars['period']} {$mdVars['status']}
 
-        ## TLDR
+        | Description | Modifier | 
+        | :---------- | -------: |
+        | Income        | {$mdVars['income']} |
+        | Rent        | {$mdVars['rent']} |
+        | Utilities   | {$mdVars['utilities']} |
+        | Food        | {$mdVars['food']} |
+        | Gas         | {$mdVars['gas']} |
+        | Entertainment | {$mdVars['entertainment']} |
+        | Clothes       | {$mdVars['clothes']} |
+        | School  Supplies | {$mdVars['schoolSupplies']} |
+        | Money for Family | {$mdVars['moneyForFamily']} |
+        | Unplanned        | {$mdVars['unplanned']} |
+        | Credit Card Expenses | {$mdVars['cc']} |
+        | Other                |  {$mdVars['other']} |
 
-        $status
+        {$mdVars['otherDescription']}
 
-        ### Expenses
-
-            - Rent {$expenses['rent']}
-            - Utilities {$expenses['utilities']}
-            - Food {$expenses['food']}
-            - Gas {$expenses['gas']}
-            - Entertainment {$expenses['entertainment']}
-            - Clothes {$expenses['clothes']}
-            - School Supplies {$expenses['schoolSupplies']}
-            - Money for Family {$expenses['moneyForFamily']}
-            - Unplanned {$expenses['unplanned']}
-            - Credit Card Expenses {$expenses['cc']}
-            - Other  {$expenses['other']}<br/>
-              > **Note** {$otherDescription}
-
-        ---
-
-        > **Note** inputs
-        > ```json
-        $inputsForMarkdown
-        > ```
+        | Result | | 
+        | :---------- | -------: |
+        | Remaining       | {$mdVars['remaining']} |
         HTML);
+
+        
         
     if ($then) {
         $then = StringExpansion::variable($then, [
-            "relativeFileName" => escapeshellarg("$workspace/$periodReadable.md"),
+            "relativeFileName" => escapeshellarg("$workspace/{$mdVars['period']}.md"),
 
             "income" => $income,
 
