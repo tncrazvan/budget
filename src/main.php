@@ -2,6 +2,7 @@
 
 use CatPaw\Attributes\Option;
 
+use function CatPaw\execute;
 use function CatPaw\readline;
 use CatPaw\Utilities\StandardDateFormat;
 use CatPaw\Utilities\StandardDateParse;
@@ -9,17 +10,13 @@ use CatPaw\Utilities\StringExpansion;
 
 function main(
     #[Option("--then")] string|false $then,
-    #[Option("--directory")] string $directory = './budget',
+    #[Option("--workspace")] string $workspace = 'budget',
 ) {
-    $here = realpath('./');
-
-    $directory = "$here/$directory";
-    echo "directory: $directory\n";
-
+    $directory = realpath('./');
 
     $previousInputsFileName = '.previous-inputs.json';
-    if (is_file("$directory/$previousInputsFileName")) {
-        $previousInputs = file_get_contents("$directory/$previousInputsFileName");
+    if (is_file("$directory/$workspace/$previousInputsFileName")) {
+        $previousInputs = file_get_contents("$directory/$workspace/$previousInputsFileName");
     } else {
         $previousInputs = false;
     }
@@ -102,8 +99,8 @@ function main(
         $remaining -= $value;
     }
 
-    if (!is_dir($directory)) {
-        mkdir($directory, 0777, true);
+    if (!is_dir("$directory/$workspace")) {
+        mkdir("$directory/$workspace", 0777, true);
     }
 
     $periodReadable = $period->format("Y F");
@@ -161,11 +158,11 @@ function main(
 
     $inputs = json_encode($inputs, JSON_PRETTY_PRINT);
 
-    file_put_contents("$directory/$previousInputsFileName", $inputs);
+    file_put_contents("$directory/$workspace/$previousInputsFileName", $inputs);
 
     $inputsForMarkdown = preg_replace('/^/m', '> ', $inputs);
 
-    file_put_contents("$directory/$periodReadable.md", <<<HTML
+    file_put_contents("$directory/$workspace/$periodReadable.md", <<<HTML
         ## Budget of $periodReadable
 
         ## TLDR
@@ -197,7 +194,8 @@ function main(
         
     if ($then) {
         $then = StringExpansion::variable($then, [
-            "relativeFile"      => escapeshellarg("$directory/$periodReadable.md"),
+            "relativeFileName"  => escapeshellarg("$workspace/$periodReadable.md"),
+            "workspace"         => $workspace,
             "inputsForMarkdown" => escapeshellarg($inputsForMarkdown),
 
             "income" => escapeshellarg($income),
@@ -218,5 +216,7 @@ function main(
 
             "date" => escapeshellarg($originalPeriod),
         ]);
+
+        echo yield execute($then);
     }
 }
