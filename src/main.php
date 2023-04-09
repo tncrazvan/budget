@@ -122,14 +122,14 @@ function main(
 
     if ($remaining > 0) {
         $status = <<<HTML
-            > **Info** Overall the budged is fine.<br/>
+            > **Note** ## Overall the budged is fine.<br/>
             > The highest expense you had this month was {$highest['key']} with a value of {$highest['value']}.<br/>
             > <br/>
             > Remaining: {$remaining}.
             HTML;
     } else {
         $status = <<<HTML
-            > **Warning** Overall the budged is not good.<br/>
+            > **Warning** ## Overall the budged is not good.<br/>
             > The highest expense you had this month was {$highest['key']} with a value of {$highest['value']}.<br/>
             > <br/>
             > Remaining: {$remaining}.
