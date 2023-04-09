@@ -5,11 +5,18 @@ use CatPaw\Attributes\Option;
 use function CatPaw\readline;
 use CatPaw\Utilities\StandardDateFormat;
 use CatPaw\Utilities\StandardDateParse;
+use CatPaw\Utilities\StringExpansion;
 
 function main(
-    #[Option("--open")] string|false $openPeriod,
-    #[Option("--directory")] string $directory = 'budget',
+    #[Option("--then")] string|false $then,
+    #[Option("--directory")] string $directory = './budget',
 ) {
+    $here = realpath('./');
+
+    $directory = "$here/$directory";
+    echo "directory: $directory\n";
+
+
     $previousInputsFileName = '.previous-inputs.json';
     if (is_file("$directory/$previousInputsFileName")) {
         $previousInputs = file_get_contents("$directory/$previousInputsFileName");
@@ -99,7 +106,7 @@ function main(
         mkdir($directory, 0777, true);
     }
 
-    $periodReadable = $period->format("F Y");
+    $periodReadable = $period->format("Y F");
     
     $highest = [
         'key'   => 'none',
@@ -187,4 +194,29 @@ function main(
         $inputsForMarkdown
         > ```
         HTML);
+        
+    if ($then) {
+        $then = StringExpansion::variable($then, [
+            "relativeFile"      => escapeshellarg("$directory/$periodReadable.md"),
+            "inputsForMarkdown" => escapeshellarg($inputsForMarkdown),
+
+            "income" => escapeshellarg($income),
+
+            "rent"      => escapeshellarg($expenses['rent']),
+            "utilities" => escapeshellarg($expenses['utilities']),
+
+            "food"             => escapeshellarg($expenses['food']),
+            "gas"              => escapeshellarg($expenses['gas']),
+            "entertainment"    => escapeshellarg($expenses['entertainment']),
+            "clothes"          => escapeshellarg($expenses['clothes']),
+            "schoolSupplies"   => escapeshellarg($expenses['schoolSupplies']),
+            "moneyForFamily"   => escapeshellarg($expenses['moneyForFamily']),
+            "unplanned"        => escapeshellarg($expenses['unplanned']),
+            "cc "              => escapeshellarg($expenses['cc']),
+            "other"            => escapeshellarg($expenses['other']),
+            "otherDescription" => escapeshellarg($otherDescription),
+
+            "date" => escapeshellarg($originalPeriod),
+        ]);
+    }
 }
