@@ -194,27 +194,25 @@ function main(
         
     if ($then) {
         $then = StringExpansion::variable($then, [
-            "relativeFileName"  => escapeshellarg("$workspace/$periodReadable.md"),
-            "workspace"         => $workspace,
-            "inputsForMarkdown" => escapeshellarg($inputsForMarkdown),
+            "relativeFileName" => escapeshellarg("$workspace/$periodReadable.md"),
 
-            "income" => escapeshellarg($income),
+            "income" => $income,
 
-            "rent"      => escapeshellarg($expenses['rent']),
-            "utilities" => escapeshellarg($expenses['utilities']),
+            "rent"      => $expenses['rent'],
+            "utilities" => $expenses['utilities'],
 
-            "food"             => escapeshellarg($expenses['food']),
-            "gas"              => escapeshellarg($expenses['gas']),
-            "entertainment"    => escapeshellarg($expenses['entertainment']),
-            "clothes"          => escapeshellarg($expenses['clothes']),
-            "schoolSupplies"   => escapeshellarg($expenses['schoolSupplies']),
-            "moneyForFamily"   => escapeshellarg($expenses['moneyForFamily']),
-            "unplanned"        => escapeshellarg($expenses['unplanned']),
-            "cc "              => escapeshellarg($expenses['cc']),
-            "other"            => escapeshellarg($expenses['other']),
+            "food"             => $expenses['food'],
+            "gas"              => $expenses['gas'],
+            "entertainment"    => $expenses['entertainment'],
+            "clothes"          => $expenses['clothes'],
+            "schoolSupplies"   => $expenses['schoolSupplies'],
+            "moneyForFamily"   => $expenses['moneyForFamily'],
+            "unplanned"        => $expenses['unplanned'],
+            "cc "              => $expenses['cc'],
+            "other"            => $expenses['other'],
             "otherDescription" => escapeshellarg($otherDescription),
 
-            "date" => escapeshellarg($originalPeriod),
+            "date" => $originalPeriod,
         ]);
 
         echo yield execute($then);
