@@ -158,26 +158,29 @@ function main(
 
     file_put_contents("$directory/$workspace/$previousInputsFileName", $inputs);
 
+    $incomeSign    = 0 === $income?'':($income > 0?'+':'-');
+    $remainingSign = 0 === $remaining?'':($remaining > 0?'+':'-');
+
     $mdVars = [
         "status"           => $remaining > 0?'✅':'❌',
         "period"           => $period->format("Y F"),
-        "rent"             => $expenses['rent']           > 0?"\$\color{red}{\\textsf{{$expenses['rent']}}}\$":"\$\color{green}{\\textsf{{$expenses['rent']}}}\$",
-        "utilities"        => $expenses['utilities']      > 0?"\$\color{red}{\\textsf{{$expenses['utilities']}}}\$":"\$\color{green}{\\textsf{{$expenses['utilities']}}}\$",
-        "food"             => $expenses['food']           > 0?"\$\color{red}{\\textsf{{$expenses['food']}}}\$":"\$\color{green}{\\textsf{{$expenses['food']}}}\$",
-        "gas"              => $expenses['gas']            > 0?"\$\color{red}{\\textsf{{$expenses['gas']}}}\$":"\$\color{green}{\\textsf{{$expenses['gas']}}}\$",
-        "entertainment"    => $expenses['entertainment']  > 0?"\$\color{red}{\\textsf{{$expenses['entertainment']}}}\$":"\$\color{green}{\\textsf{{$expenses['entertainment']}}}\$",
-        "clothes"          => $expenses['clothes']        > 0?"\$\color{red}{\\textsf{{$expenses['clothes']}}}\$":"\$\color{green}{\\textsf{{$expenses['clothes']}}}\$",
-        "schoolSupplies"   => $expenses['schoolSupplies'] > 0?"\$\color{red}{\\textsf{{$expenses['schoolSupplies']}}}\$":"\$\color{green}{\\textsf{{$expenses['schoolSupplies']}}}\$",
-        "moneyForFamily"   => $expenses['moneyForFamily'] > 0?"\$\color{red}{\\textsf{{$expenses['moneyForFamily']}}}\$":"\$\color{green}{\\textsf{{$expenses['moneyForFamily']}}}\$",
-        "unplanned"        => $expenses['unplanned']      > 0?"\$\color{red}{\\textsf{{$expenses['unplanned']}}}\$":"\$\color{green}{\\textsf{{$expenses['unplanned']}}}\$",
-        "cc"               => $expenses['cc']             > 0?"\$\color{red}{\\textsf{{$expenses['cc']}}}\$":"\$\color{green}{\\textsf{{$expenses['cc']}}}\$",
-        "other"            => $expenses['other']          > 0?"\$\color{red}{\\textsf{{$expenses['other']}}}\$":"\$\color{green}{\\textsf{{$expenses['other']}}}\$",
+        "rent"             => $expenses['rent']           > 0?"\$\color{red}{\\textsf{-{$expenses['rent']}}}\$":"\$\color{green}{\\textsf{{$expenses['rent']}}}\$",
+        "utilities"        => $expenses['utilities']      > 0?"\$\color{red}{\\textsf{-{$expenses['utilities']}}}\$":"\$\color{green}{\\textsf{{$expenses['utilities']}}}\$",
+        "food"             => $expenses['food']           > 0?"\$\color{red}{\\textsf{-{$expenses['food']}}}\$":"\$\color{green}{\\textsf{{$expenses['food']}}}\$",
+        "gas"              => $expenses['gas']            > 0?"\$\color{red}{\\textsf{-{$expenses['gas']}}}\$":"\$\color{green}{\\textsf{{$expenses['gas']}}}\$",
+        "entertainment"    => $expenses['entertainment']  > 0?"\$\color{red}{\\textsf{-{$expenses['entertainment']}}}\$":"\$\color{green}{\\textsf{{$expenses['entertainment']}}}\$",
+        "clothes"          => $expenses['clothes']        > 0?"\$\color{red}{\\textsf{-{$expenses['clothes']}}}\$":"\$\color{green}{\\textsf{{$expenses['clothes']}}}\$",
+        "schoolSupplies"   => $expenses['schoolSupplies'] > 0?"\$\color{red}{\\textsf{-{$expenses['schoolSupplies']}}}\$":"\$\color{green}{\\textsf{{$expenses['schoolSupplies']}}}\$",
+        "moneyForFamily"   => $expenses['moneyForFamily'] > 0?"\$\color{red}{\\textsf{-{$expenses['moneyForFamily']}}}\$":"\$\color{green}{\\textsf{{$expenses['moneyForFamily']}}}\$",
+        "unplanned"        => $expenses['unplanned']      > 0?"\$\color{red}{\\textsf{-{$expenses['unplanned']}}}\$":"\$\color{green}{\\textsf{{$expenses['unplanned']}}}\$",
+        "cc"               => $expenses['cc']             > 0?"\$\color{red}{\\textsf{-{$expenses['cc']}}}\$":"\$\color{green}{\\textsf{{$expenses['cc']}}}\$",
+        "other"            => $expenses['other']          > 0?"\$\color{red}{\\textsf{-{$expenses['other']}}}\$":"\$\color{green}{\\textsf{{$expenses['other']}}}\$",
         "otherDescription" => $expenses['other']          > 0 ?<<<HTML
             > **Note** `Other` description
             > {$otherDescription}
             HTML:'',
-        "income"    => $income    > 0?"\$\color{green}{\\textsf{ $income }}\$":"\$\color{red}{\\textsf{ $income }}\$",
-        "remaining" => $remaining > 0?"\$\color{green}{\\textsf{ $remaining }}\$":"\$\color{red}{\\textsf{ $remaining }}\$",
+        "income"    => $income    > 0?"\$\color{green}{\\textsf{ $incomeSign$income }}\$":"\$\color{red}{\\textsf{ $incomeSign$income }}\$",
+        "remaining" => $remaining > 0?"\$\color{green}{\\textsf{ $remainingSign$remaining }}\$":"\$\color{red}{\\textsf{ $remainingSign$remaining }}\$",
     ];
 
     file_put_contents("$directory/$workspace/{$mdVars['period']}.md", <<<HTML
@@ -200,9 +203,9 @@ function main(
 
         {$mdVars['otherDescription']}
 
-        | Result | | 
+        | Remaining | | 
         | :---------- | -------: |
-        | Remaining       | {$mdVars['remaining']} |
+        | Net       | {$mdVars['remaining']} |
         HTML);
 
         
