@@ -176,7 +176,7 @@ function main(
         "cc"               => $expenses['cc']             > 0?"\$\color{red}{\\textsf{-{$expenses['cc']}}}\$":"\$\color{green}{\\textsf{{$expenses['cc']}}}\$",
         "other"            => $expenses['other']          > 0?"\$\color{red}{\\textsf{-{$expenses['other']}}}\$":"\$\color{green}{\\textsf{{$expenses['other']}}}\$",
         "otherDescription" => $expenses['other']          > 0 ?<<<HTML
-            > **Note** `Other` description
+            > **Note** `Other` description<br/>
             > {$otherDescription}
             HTML:'',
         "income"    => $income    > 0?"\$\color{green}{\\textsf{ $incomeSign$income }}\$":"\$\color{red}{\\textsf{ $incomeSign$income }}\$",
