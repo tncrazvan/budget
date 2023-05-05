@@ -22,8 +22,6 @@ function main(
     }
 
     $inputs = $previousInputs?json_decode($previousInputs, true):[];
-
-    $otherDescription = $inputs['otherDescription'] ?? '';
     
     $inputs = [
         "income" => $inputs['income'] ?? 0,
@@ -31,15 +29,16 @@ function main(
         "rent"      => $inputs['rent']      ?? 0,
         "utilities" => $inputs['utilities'] ?? 0,
 
-        "food"           => $inputs['food']           ?? 0,
-        "gas"            => $inputs['gas']            ?? 0,
-        "entertainment"  => $inputs['entertainment']  ?? 0,
-        "clothes"        => $inputs['clothes']        ?? 0,
-        "schoolSupplies" => $inputs['schoolSupplies'] ?? 0,
-        "moneyForFamily" => $inputs['moneyForFamily'] ?? 0,
-        "unplanned"      => $inputs['unplanned']      ?? 0,
-        "cc"             => $inputs['cc']             ?? 0,
-        "other"          => $inputs['other']          ?? 0,
+        "food"             => $inputs['food']             ?? 0,
+        "gas"              => $inputs['gas']              ?? 0,
+        "entertainment"    => $inputs['entertainment']    ?? 0,
+        "clothes"          => $inputs['clothes']          ?? 0,
+        "schoolSupplies"   => $inputs['schoolSupplies']   ?? 0,
+        "moneyForFamily"   => $inputs['moneyForFamily']   ?? 0,
+        "unplanned"        => $inputs['unplanned']        ?? 0,
+        "cc"               => $inputs['cc']               ?? 0,
+        "other"            => $inputs['other']            ?? 0,
+        "otherDescription" => $inputs['otherDescription'] ?? '',
 
         "period" => $inputs['period'] ?? false,
     ];
@@ -88,7 +87,8 @@ function main(
     $expenses['other']          = '' !== $expenses['other']?(float)$expenses['other']:(float)$inputs['other'];
 
     if ($expenses['other'] > 0) {
-        $otherDescription = yield readline("     describe `other` ($otherDescription): ");
+        $otherDescription           = yield readline("     describe `other` ({$inputs['otherDescription']}): ");
+        $inputs['otherDescription'] = '' !== $otherDescription?$otherDescription:$inputs['otherDescription'];
     }
 
     $income = yield readline("How much money did you make last month? ({$inputs['income']}) ");
@@ -149,7 +149,7 @@ function main(
         "unplanned"        => $expenses['unplanned'],
         "cc "              => $expenses['cc'],
         "other"            => $expenses['other'],
-        "otherDescription" => $otherDescription,
+        "otherDescription" => $inputs['otherDescription'],
 
         "date" => $originalPeriod,
     ];
@@ -177,7 +177,7 @@ function main(
         "other"            => $expenses['other']          > 0?"\$\color{red}{\\textsf{-{$expenses['other']}}}\$":"\$\color{green}{\\textsf{{$expenses['other']}}}\$",
         "otherDescription" => $expenses['other']          > 0 ?<<<HTML
             > **Note** `Other` description<br/>
-            > {$otherDescription}
+            > {$inputs['otherDescription']}
             HTML:'',
         "income"    => $income    > 0?"\$\color{green}{\\textsf{ $incomeSign$income }}\$":"\$\color{red}{\\textsf{ $incomeSign$income }}\$",
         "remaining" => $remaining > 0?"\$\color{green}{\\textsf{ $remainingSign$remaining }}\$":"\$\color{red}{\\textsf{ $remainingSign$remaining }}\$",
@@ -228,7 +228,7 @@ function main(
             "unplanned"        => $expenses['unplanned'],
             "cc "              => $expenses['cc'],
             "other"            => $expenses['other'],
-            "otherDescription" => escapeshellarg($otherDescription),
+            "otherDescription" => escapeshellarg($inputs['otherDescription']),
 
             "date" => $originalPeriod,
         ]);
