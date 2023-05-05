@@ -154,9 +154,7 @@ function main(
         "date" => $originalPeriod,
     ];
 
-    $inputs = json_encode($inputs, JSON_PRETTY_PRINT);
-
-    file_put_contents("$directory/$workspace/$previousInputsFileName", $inputs);
+    file_put_contents("$directory/$workspace/$previousInputsFileName", json_encode($inputs, JSON_PRETTY_PRINT));
 
     $incomeSign    = 0 === $income?'':($income > 0?'+':'-');
     $remainingSign = 0 === $remaining?'':($remaining > 0?'+':'-');
@@ -211,6 +209,7 @@ function main(
         
         
     if ($then) {
+        echo 'Executing --then...'.PHP_EOL;
         $then = StringExpansion::variable($then, [
             "relativeFileName" => escapeshellarg("$workspace/{$mdVars['period']}.md"),
 
